@@ -1,0 +1,12 @@
+{
+  "name": "node_basic",
+  "version": "1.0.0",
+  "description": "node basic fundamental",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "putr",
+  "license": "ISC",
+  "keywords": []
+}
