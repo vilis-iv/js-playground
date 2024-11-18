@@ -77,4 +77,66 @@ const addNoteHandler = (request, h) => {
   return response;
 };
 
-module.exports = { getNotesHandler, addNoteHandler };
+const updateNoteHandler = (request, h) => {
+  const { id } = request.params;
+
+  const { title, tags, body } = request.payload;
+  const updateAt = new Date().toISOString();
+
+  const index = notes.findIndex((note) => note.id === id);
+
+  if (index !== -1) {
+    notes[index] = {
+      ...notes[index],
+      title,
+      tags,
+      body,
+      updateAt,
+    };
+
+    return h
+      .response({
+        status: 'success',
+        message: 'note successfully updated',
+        data: notes[index],
+      })
+      .code(200);
+  } else {
+    return h
+      .response({
+        status: 'fail',
+        message: 'failed to update note',
+      })
+      .code(404);
+  }
+};
+
+const deleteNoteHandler = (request, h) => {
+  const { id } = request.params;
+
+  const index = notes.findIndex((note) => note.id === id);
+
+  if (index !== -1) {
+    notes.splice(index, 1);
+    return h
+      .response({
+        status: 'success',
+        message: 'note successfully deleted',
+      })
+      .code(200);
+  } else {
+    return h
+      .response({
+        status: 'fail',
+        message: 'note delete failed',
+      })
+      .code(404);
+  }
+};
+
+module.exports = {
+  getNotesHandler,
+  addNoteHandler,
+  updateNoteHandler,
+  deleteNoteHandler,
+};
