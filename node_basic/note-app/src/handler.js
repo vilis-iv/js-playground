@@ -4,8 +4,6 @@ const notes = require('./notes');
 const getNotesHandler = (request, h) => {
   const { title } = request.params;
 
-  console.log(`${title}`);
-
   const response = h
     .response({
       status: 'success',
