@@ -4,15 +4,35 @@ const notes = require('./notes');
 const getNotesHandler = (request, h) => {
   const { title } = request.params;
 
-  const response = h
-    .response({
-      status: 'success',
-      data:
-        title != null ? notes.filter((note) => note.title === title) : notes,
-    })
-    .code(200);
+  if (notes.length == 0) {
+    return h
+      .response({
+        status: 'success',
+        data: 'data is empty',
+      })
+      .code(200);
+  }
 
-  return response;
+  let noteView = notes;
+  if (title != null) {
+    noteView = notes.filter((note) => note.title === title);
+  }
+
+  if (noteView.length == 0) {
+    return h
+      .response({
+        status: 'fail',
+        data: 'cannot find data',
+      })
+      .code(404);
+  } else {
+    return h
+      .response({
+        status: 'success',
+        data: noteView,
+      })
+      .code(200);
+  }
 };
 
 const addNoteHandler = (request, h) => {
