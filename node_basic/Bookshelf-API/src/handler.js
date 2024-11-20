@@ -15,8 +15,8 @@ const addBook = (request, h) => {
   } = request.payload;
 
   const finished = pageCount === readPage ? true : false;
-  const insertAt = new Date().toISOString();
-  const updateAt = insertAt;
+  const insertedAt = new Date().toISOString();
+  const updatedAt = insertedAt;
 
   if (name == null || name == '') {
     return h
@@ -45,8 +45,8 @@ const addBook = (request, h) => {
       readPage,
       finished,
       reading,
-      insertAt,
-      updateAt,
+      insertedAt,
+      updatedAt,
     };
 
     books.push(newBook);
@@ -85,13 +85,31 @@ const getBook = (request, h) => {
             message: 'Buku tidak ditemukan',
           })
           .code(404);
-  }
-  {
+  } else {
+    const { name, reading, finished } = request.query;
+    let bookView = [...books];
+
+    if (name != null) {
+      bookView = bookView.filter((book) =>
+        book.name.toLowerCase().includes(name.toLowerCase())
+      );
+    } else if (reading != null) {
+      bookView = bookView.filter(
+        (book) => book.reading == Boolean(Number(reading))
+      );
+    } else if (finished != null) {
+      bookView = bookView.filter(
+        (book) => book.finished === Boolean(Number(finished))
+      );
+    } else {
+      bookView = [...books];
+    }
+
     return h
       .response({
         status: 'success',
         data: {
-          books: books.map(({ id, name, publisher }) => ({
+          books: bookView.map(({ id, name, publisher }) => ({
             id,
             name,
             publisher,
@@ -140,7 +158,7 @@ const updateBook = (request, h) => {
       })
       .code(404);
   } else {
-    const updateAt = new Date().toISOString();
+    const updatedAt = new Date().toISOString();
     books[index] = {
       ...books[index],
       name,
@@ -151,7 +169,7 @@ const updateBook = (request, h) => {
       pageCount,
       readPage,
       reading,
-      updateAt,
+      updatedAt,
     };
 
     return h
